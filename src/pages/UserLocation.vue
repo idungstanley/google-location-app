@@ -1,44 +1,69 @@
 <template>
- <section class="ui two column centered grid">
-   <div class="column">
-     <form action="" class="ui segment large form">
-       <div class="ui message red"></div>
-       <div class="ui segment">
-         <div class="field">
-           <div class="ui right icon input large">
-             <input type="text" placeholder="Enter your address">
-             <i class="circle icon"></i>
-           </div>
-         </div>
-         <button class="ui button" @click="locatorButtonPressed">Go</button>
-       </div>
-     </form>
-   </div>
- </section>
+  <section class="ui two column centered grid">
+    <div class="column">
+      <form action="" class="ui segment large form">
+        <div class="ui message red"></div>
+        <div class="ui segment">
+          <div class="field">
+            <div class="ui right icon input large">
+              <input type="text" placeholder="Enter your address " />
+              <i class="dot circle link icon" @click="locatorButtonPressed"></i>
+            </div>
+          </div>
+          <button class="ui button">Go</button>
+        </div>
+      </form>
+    </div>
+  </section>
 </template>
 
-
 <script>
+import axios from "axios";
+
 export default {
-  methods:{
-    locatorButtonPressed(){
-      if(navigator.geolocation){
-navigator.geolocation.getCurrentPosition(position=>{
-  console.log(position.coords.latitude);
-  console.log(position.coords.longitude);
-}),error=>{
-  console.log(error.message);
-}
-      }else{
-        console.log('Your Browswer does not support   geolocation api');
+  methods: {
+    locatorButtonPressed() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          this.getAddressFrom(
+            position.coords.latitude,
+            position.coords.longitude
+          );
+        }),
+          error => {
+            console.log(error.message);
+          };
+      } else {
+        console.log("Your Browswer does not support   geolocation api");
       }
+    },
+    getAddressFrom(lat, long) {
+      axios
+        .get(
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
+            lat +
+            "," +
+            long +
+            "&key=AIzaSyBDCcfybeHcMSBj7dhF2o3Oy2g2GtMa7w0"
+        )
+        .then(response => {
+          if (response.data.error_message) {
+            console.log(response.data.error_message);
+          } else {
+            console.log(response.data.results[0].formatted_address);
+          }
+        })
+        .catch(error => {
+          console.log(error.message);
+        });
     }
   }
-}
+};
 </script>
 <style>
-.ui.button, .dot.circle.icon{
+.ui.button,
+.dot.circle.icon {
   background-color: #ff5a5f;
-  color: white ;
+  color: white;
 }
 </style>
