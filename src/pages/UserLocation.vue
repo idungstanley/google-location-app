@@ -17,6 +17,25 @@
  </section>
 </template>
 
+
+<script>
+export default {
+  methods:{
+    locatorButtonPressed(){
+      if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(position=>{
+  console.log(position.coords.latitude);
+  console.log(position.coords.longitude);
+}),error=>{
+  console.log(error.message);
+}
+      }else{
+        console.log('Your Browswer does not support   geolocation api');
+      }
+    }
+  }
+}
+</script>
 <style>
 .ui.button, .dot.circle.icon{
   background-color: #ff5a5f;
