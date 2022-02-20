@@ -2,11 +2,15 @@
   <section class="ui two column centered grid">
     <div class="column">
       <form action="" class="ui segment large form">
-        <div class="ui message red"></div>
+        <div class="ui message red" v-show="error">{{ error }}</div>
         <div class="ui segment">
           <div class="field">
             <div class="ui right icon input large">
-              <input type="text" placeholder="Enter your address " />
+              <input
+                type="text"
+                placeholder="Enter your address  "
+                v-model="address"
+              />
               <i class="dot circle link icon" @click="locatorButtonPressed"></i>
             </div>
           </div>
@@ -21,6 +25,12 @@
 import axios from "axios";
 
 export default {
+  data() {
+    return {
+      address: "",
+      error: ""
+    };
+  },
   methods: {
     locatorButtonPressed() {
       if (navigator.geolocation) {
@@ -31,9 +41,11 @@ export default {
           );
         }),
           error => {
+            this.error = error.message;
             console.log(error.message);
           };
       } else {
+        this.error = error.message;
         console.log("Your Browswer does not support   geolocation api");
       }
     },
@@ -48,12 +60,14 @@ export default {
         )
         .then(response => {
           if (response.data.error_message) {
+            this.error = response.data.error_message
             console.log(response.data.error_message);
           } else {
-            console.log(response.data.results[0].formatted_address);
+            this.address = response.data.results[0].formatted_address;
           }
         })
         .catch(error => {
+          this.error = error.message
           console.log(error.message);
         });
     }
