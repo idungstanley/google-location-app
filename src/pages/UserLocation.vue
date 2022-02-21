@@ -46,7 +46,7 @@ export default {
     };
   },
   mounted() {
-    new google.maps.places.Autocomplete(
+   let autocomplete = new google.maps.places.Autocomplete(
       document.getElementById("autocomplete"),
       {
         bounds: new google.maps.LatLngBounds(
@@ -54,6 +54,10 @@ export default {
         )
       }
     );
+    autocomplete.addListener("place_changed", ()=>{
+     let place = autocomplete.getPlace();
+     this,this.showUserLocationOnTheMap(place.geometry.location.lat(),place.geometry.location.lng())
+    })
   },
   methods: {
     locatorButtonPressed() {
@@ -109,12 +113,17 @@ export default {
         });
     },
     showUserLocationOnTheMap(lat, lng) {
+      // create a map object
       let map = new google.maps.Map(document.getElementById("map"), {
         zoom: 15,
         center: new google.maps.LatLng(lat, lng),
         mapTypeId: google.maps.mapTypeId.ROADMAP
       });
-      
+     //Add Marker
+     new google.maps.Marker({
+       position: new google.maps.LatLng(lat,lng),
+       map:map
+     })
     }
   }
 };
