@@ -5,7 +5,7 @@
         <div class="ui message red" v-show="error">{{ error }}</div>
         <div class="ui segment">
           <div class="field">
-            <div class="ui right icon input large">
+            <div class="ui right icon input large" :class="{loading:spinner}">
               <input
                 type="text"
                 placeholder="Enter your address  "
@@ -28,23 +28,30 @@ export default {
   data() {
     return {
       address: "",
-      error: ""
+      error: "",
+      spinner: false
     };
   },
   methods: {
     locatorButtonPressed() {
+      this.spinner = true
+      
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
+        navigator.geolocation.getCurrentPosition(
+          position => {
           this.getAddressFrom(
             position.coords.latitude,
             position.coords.longitude
           );
-        }),
+        },
           error => {
-            this.error = error.message;
+            this.spinner = false
+            this.error = "Locator is unabled to find your address, please type your address manually";
             console.log(error.message);
-          };
+          }
+        );
       } else {
+        this.spinner = false
         this.error = error.message;
         console.log("Your Browswer does not support   geolocation api");
       }
@@ -65,8 +72,10 @@ export default {
           } else {
             this.address = response.data.results[0].formatted_address;
           }
+            this.spinner = false
         })
         .catch(error => {
+          this.spinner = false
           this.error = error.message
           console.log(error.message);
         });
