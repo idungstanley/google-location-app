@@ -66,6 +66,10 @@ export default {
               position.coords.latitude,
               position.coords.longitude
             );
+            this.showUserLocationOnTheMap(
+              position.coords.latitude,
+              position.coords.longitude
+            );
           },
           error => {
             this.spinner = false;
@@ -103,6 +107,14 @@ export default {
           this.error = error.message;
           console.log(error.message);
         });
+    },
+    showUserLocationOnTheMap(lat, lng) {
+      let map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 15,
+        center: new google.maps.LatLng(lat, lng),
+        mapTypeId: google.maps.mapTypeId.ROADMAP
+      });
+      
     }
   }
 };
